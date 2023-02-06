@@ -1,0 +1,60 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Crypto screener for 15m</title>
+  </head>
+<body>
+<center>
+  <img src="bg.jpg" width="16%">
+  <table border="1"><td>
+<li>ดึงคู่เหรียญเทรด BUSD ทั้งหมด</li>
+<li>ดึงข้อมูลย้อนหลัง 15 นาที</li>
+<li>คำนวณหาจุดกลับตัว (Pivot Point)</li>
+<li>คำนวณหาแนวรับ (Support Line)</li>
+<li>คำนวณหาแนวต้าน (Resistance Line)</li>
+<li>คัดเลือก => ถ้าเหรียญไหนราคาเกิน 0.5% ของแนวรับ แต่ไม่เกินแนวต้าน</li>
+<li>เปิดเหรียญที่คัดเลือกมาแบบหน้าจอกราฟรวม</li>
+</td></table>
+</center>
+</body>
+ <script>
+data = ['']
+localStorage.setItem("items", JSON.stringify(data));
+data = JSON.parse(localStorage.getItem("items"));
+
+cryptoCoin = ["ETC","KEY","CFX","IMX","ELF","ACH","DEGO","MANA","AUTO","AVAX","GTC","BAR","ORN","MINA","CVC","NKN","XRP","STG","VOXEL","GHST","NEBL","UMA","LTO","CKB","TKO","QI","WBTC","SNM","LUNA","ZEN","SUSHI","LIT","WAXP","AGIX","ATM","BCH","MATIC","GLMR","XVS","MULTI","UNFI","MOVR","DAI","MBOX","ANT","BAKE","COTI","KNC","RPL","IOST","TRX","UTK","XLM","SANTOS","ALPHA","POWR","ZEC","FORTH","POLS","DAR","TRB","RVN","AR","LUNC","GALA","REN","PROM","PERP","SRM","ICX","WIN","LEVER","1INCH","MDX","QTUM","OMG","REI","THETA","JUV","RUNE","SHIB","ROSE","YGG","FIS","STPT","BNB","WRX","OP","TVK","EUR","ASTR","HOOK","LPT","HOT","HFT","GRT","ZIL","DF","SUN","AXS","BICO","PHA","QNT","LOOM","ENJ","UNI","LINA","BEL","GLM","HIVE","MC","NMR","IOTX","MAGIC","CELO","ALCX","ALPINE","CVP","SOL","BTTC","BETH","BLZ","ALGO","OOKI","UFT","AUDIO","SCRT","AMP","ZRX","KAVA","SFP","CREAM","CTSI","XEC","AERGO","SUPER","DENT","FLOW","SLP","HNT","BAL","LSK","CELR","STORJ","FIL","VITE","CHZ","IQ","STRAX","BNB","AKRO","FLUX","DODO","JOE","ONT","CTXC","ALGO","PROS","BSW","C98","AVA","SHIB","FOR","PYR","TORN","MLN","XTZ","FET","ARPA","AMB","BTC","DYDX","FXS","VIDT","HBAR","ENS","DUSK","COCOS","ONE","BNX","BNB","PUNDIX","CTK","APT","MATIC","EGLD","VIB","MBL","PORTO","CVX","JASMY","LTC","LPT","CRV","DOT","NEAR","POLYX","MTL","COS","CITY","INJ","ONE","BIFI","OCEAN","QUICK","ATOM","CLV","IOTA","ALPACA","WING","TRX","FARM","BURGER","FIDA","OSMO","ANKR","T","JST","GAL","RARE","SNX","ASR","YFI","STX","RNDR","QKC","AAVE","ALICE","MOB","PAXG","RAY","FIO","PHB","DOCK","DGB","MDT","ADA","MKR","KLAY","XMR","WAVES","OG","KSM","CAKE","RAD","OXT","XNO","TLM","PLA","WOO","TROY","REEF","ATA","XVG","ARK","LRC","KDA","ACM","DOGE","NEXO","AUD","ETH","SKL","CHESS","API3","APE","PEOPLE","EOS","MASK","IDEX","AUCTION","ACA","DREP","LINK","OMG","MANA","ILV","BNT","VET","SC","OGN","ADA","OM","ICP","SAND","GMX","BETA","SNT","ERN","DAI","SSV","DASH","GMT","BAT","STEEM","XTZ","GAS","HARD","LOKA","AGLD","BADGER","ZIL","LAZIO","PSG","DEXE","EOS","FTM","POND","DATA","GBP","MIR","LDO","BOND","SPELL","TOMO","RSR","KP3R","FRONT","SOL","NEO","HBAR","SXP","TFUEL","FTT","STMX","NULS","NEAR","ANC","ETH","DIA","TWT","CHR","COMP","REQ","HIGH","EPX","FIRO","SYS","BAND"]
+function scan(x){
+    fetch("https://api.binance.com/api/v3/klines?symbol=" + x +'BUSD&interval=15m&limit=' + 1)
+   .then(response => response.json())
+   .then(result => {
+    high = Number(result[0][2])
+    low = Number(result[0][3])
+    close = Number(result[0][3])
+    pp = ((high + low + close) / 3)
+    resistance = pp+(high-low)
+    support = low-(2*(high-pp))
+    fetch("https://api.binance.com/api/v1/ticker/24hr?symbol=" + x + "BUSD")
+    .then(response => response.json())
+   .then(result => {
+    now = Number(result.lastPrice)
+    pointFive = (support*(0.5/100))+support
+    if(now > pointFive && now < resistance){
+    data.push(result.symbol)
+    localStorage.setItem("items", JSON.stringify(data));
+    }
+    exportData = localStorage.getItem("items").replace(/["']/g, "")
+    exportData2 = exportData.replace("[,", "");
+    exportData3 = exportData2.replace("]", "");
+    localStorage.setItem("items2", exportData3)
+  })
+ })
+}
+window.open("https://www.multicoincharts.com/?c="+ localStorage.getItem("items2"))
+
+for (i = 0; i < cryptoCoin.length; i++) {
+scan(cryptoCoin[i])
+}
+
+// column = ['open_time','open','high','low','close','volume','close_time','qav','num_trades','taker_base_vol','taker_quote','is_best_match']
+    </script>
+</html>
