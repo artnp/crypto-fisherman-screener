@@ -52,7 +52,7 @@ function scan(x){
 }
 if (localStorage.getItem("items2") !== '['){
   document.getElementById('fishing').innerHTML = "🐟 ปลากินเบ็ดแล้ว"
-  window.open("https://www.multicoincharts.com/?c="+ localStorage.getItem("items2"))
+  window.location.replace("https://www.multicoincharts.com/?c="+ localStorage.getItem("items2"))
 } else {
 document.getElementById('fishing').innerHTML = "ปลายังไม่กินเบ็ด..."
 }
