@@ -49,7 +49,9 @@ function scan(x){
   })
  })
 }
-window.open("https://www.multicoincharts.com/?c="+ localStorage.getItem("items2"))
+if (localStorage.getItem("items2") !== '['){
+  window.open("https://www.multicoincharts.com/?c="+ localStorage.getItem("items2"))
+}
 
 for (i = 0; i < cryptoCoin.length; i++) {
 scan(cryptoCoin[i])
