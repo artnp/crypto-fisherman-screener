@@ -20,6 +20,8 @@
 </body>
  <script>
 data = ['']
+   localStorage.getItem("items") == ''
+     localStorage.getItem("items2") == ''
 localStorage.setItem("items", JSON.stringify(data));
 data = JSON.parse(localStorage.getItem("items"));
 
